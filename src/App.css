@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*body {
+  background-color: hsl(236, 33%, 92%);
+}*/
+
+.containerr {
+  background-image: url("./assets/bg-desktop-light.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 100vh;
+  overflow: hidden; /* ou overflow: auto; */
+  background-color: hsl(236, 33%, 92%);
+}
+
+@media screen and (max-width: 1023px) {
+  .containerr {
+    background-image: url("./assets/bg-mobile-light.jpg");
+  }
+
+  .containerr .dark {
+    background-image: url("./assets/bg-mobile-dark.jpg");
+  }
+}
+
+.check_button {
+  position: relative;
+  border: 1px solid hsl(236, 9%, 61%);
+  border-radius: 50%;
+  padding: 1px;
+  line-height: 1;
+}
+
+.check_button:hover,
+.checked_button {
+  position: relative;
+  /*background: linear-gradient(to right, red, purple);*/
+  background: linear-gradient(
+    to right,
+    hsl(192, 100%, 67%),
+    hsl(280, 87%, 65%)
+  );
+}
+
+.check_box {
+  background: white;
+  border: 1px solid transparent;
+  border-radius: 50%;
+}
+
+.todo_list {
+  /* border: 1px solid white;*/
+}
+
+.checkedBG {
+  position: relative;
+  border-color: transparent;
+  background: linear-gradient(
+    to bottom right,
+    hsl(192, 100%, 67%),
+    hsl(280, 87%, 65%)
+  );
+
+  background-image: url("./assets/icon-check.svg");
+  background-repeat: no-repeat;
+  background-size: 75%;
+  background-position: 50%;
+}
+
+.check_button_icon {
+  width: 50px;
+}
+
+.completed_tasks {
+  -webkit-text-fill-color: hsl(233, 11%, 84%);
+}
+
+.todo > .delete_button {
+  display: none;
+}
+
+.todo:hover > .delete_button {
+  display: inline;
+}
+
+.todos-options {
+  color: hsl(235, 19%, 35%);
+}
+
+.button_clear-items:hover,
+.filter-items:hover {
+  color: black;
+}
+
+.selectedOption {
+  color: hsl(220, 98%, 61%);
+}
+
+.todos_container {
+  background-color: white;
+}
+
+.dark {
+  background-image: url("./assets/bg-desktop-dark.jpg");
+
+  background-color: hsl(235, 21%, 11%);
+  color: #d1d5db;
+}
+
+.dark .todos_container {
+  border-color: hsl(237, 14%, 26%);
+}
+
+.dark .todos_container,
+.dark .todos_container input,
+.dark .check_box {
+  background-color: hsl(235, 24%, 19%);
+  color: hsl(234, 39%, 85%);
+}
+
+.dark .checkedBG {
+  color: hsl(234, 11%, 52%);
+  border-color: transparent;
+  background: linear-gradient(
+    to bottom right,
+    hsl(192, 100%, 67%),
+    hsl(280, 87%, 65%)
+  );
+
+  background-image: url("./assets/icon-check.svg");
+  background-repeat: no-repeat;
+  background-size: 75%;
+  background-position: 50%;
+}
+
+.dark .completed_tasks {
+  -webkit-text-fill-color: hsl(234, 11%, 52%);
+}
+
+.dark .todos-options {
+  color: hsl(234, 11%, 52%);
+}
+
+.dark .button_clear-items:hover,
+.dark .filter-items:hover {
+  color: hsl(236, 33%, 92%);
+}
