@@ -47,60 +47,47 @@ function App() {
     todo.completed = todo.completed ? false : true;
   };*/
   /*
-  const quickSort = (tdos: Array<todoType>): Array<todoType> => {
-    if (tdos.length <= 1) {
-      return tdos;
+  const quickSort = (todos: todoType[], low = 0, high = todos.length - 1) => {
+  if (low < high) {
+    const pivotIndex = partition(todos, low, high);
+    quickSort(todos, low, pivotIndex - 1);
+    quickSort(todos, pivotIndex + 1, high);
+  }
+  return todos;
+};
+
+const partition = (todos: todoType[], low: number, high: number) => {
+  const pivot = todos[high].completed;
+  let i = low - 1;
+
+  for (let j = low; j < high; j++) {
+    if (todos[j].completed <= pivot) {
+      i++;
+      [todos[i], todos[j]] = [todos[j], todos[i]]; // Swap elements
     }
+  }
 
-    const pivot = tdos[Math.floor(tdos.length / 2)];
-    const left = [];
-    const right = [];
+  [todos[i + 1], todos[high]] = [todos[high], todos[i + 1]]; // Swap pivot
 
-    for (let i = 0; i < tdos.length; i++) {
-      if (i !== Math.floor(tdos.length / 2)) {
-        if (tdos[i].completed === false && pivot.completed === false) {
-          if (tdos[i].id !== pivot.id) {
-            left.push(tdos[i]);
-          }
-        } else if (tdos[i].completed === true && pivot.completed === true) {
-          if (tdos[i].id !== pivot.id) {
-            right.push(tdos[i]);
-          }
-        } else if (tdos[i].completed === false && pivot.completed === true) {
-          left.push(tdos[i]);
-        } else {
-          right.push(tdos[i]);
-        }
-      }
-    }
-
-    return [...quickSort(left), pivot, ...quickSort(right)];
-  };
+  return i + 1;
+};
 */
 
-  const sortTodos = (): Array<todoType> => {
-    return [...todos].sort((a, b) => {
-      // Mettez d'abord les todos non complétés avant les todos complétés
-      if (a.completed && !b.completed) {
-        return 1; // b vient avant a
-      } else if (!a.completed && b.completed) {
-        return -1; // a vient avant b
-      } else {
-        // Si les deux todos sont de même état (complétés ou non complétés), conservez l'ordre existant
-        return 0;
-      }
+  const sortTodos = (todos: todoType[]) => {
+    return todos.sort((todoA, todoB) => {
+      if (todoA.completed && !todoB.completed) return -1;
+      if (!todoA.completed && todoB.completed) return 1;
+      return 0;
     });
   };
-  const handleCheck = (id: number) => {
+
+  const handleCheck = (tds: boolean, id: number) => {
     setTodos((prevTodos) =>
-      prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, completed: !todo.completed };
-        }
-        return todo;
-      })
+      prevTodos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
     );
-    setTodos(sortTodos());
+    if (!tds) rearrangeTodos(id);
   };
 
   const addTodo = (newTodo: string) => {
@@ -122,21 +109,48 @@ function App() {
     //setTodos([...tdos]);
     setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
   };
+  /*
+  const rearrangeTodos = (id: number, index: number) => {
+    //for (let i = 0; i < todos.length; i++) {
+    //if (todos[i].id === index) {
+    //console.log(todos[i]);
+    handleCheck(id);
+
+    if (index < todos.length) {
+      tdd = todos[index];
+    }
+
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    console.log(todos);
+
+    console.log(tdd);
+
+    setTodos((prevTodos) => [...prevTodos, tdd]);
+  };
+*/
+  const rearrangeTodos = (id: number) => {
+    setTodos((prevTodos) => {
+      const todoToRearrange = prevTodos.find((todo) => todo.id === id);
+      if (!todoToRearrange) return prevTodos;
+
+      return [...prevTodos.filter((todo) => todo.id !== id), todoToRearrange];
+    });
+  };
 
   const countActiveTodos = (tdos: Array<todoType>) => {
     return tdos.filter((todo) => !todo.completed).length;
   };
-  let isLaptop = window.innerWidth >= 1024;
 
-  const [isLaptopState, setIsLaptopState] = useState(window.innerWidth >= 1024);
+  const [isLaptop, setIsLaptopState] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
     const handleResize = () => {
-      isLaptop = window.innerWidth >= 1024;
-      setIsLaptopState(isLaptop); // Trigger a re-render with the updated value
+      setIsLaptopState(window.innerWidth >= 1024);
     };
 
-    // ... rest of the code
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   //console.log(activeTodos(todos));
@@ -220,7 +234,7 @@ function App() {
         </div>
 
         <div className="todo_list">
-          {filterTodos().map((todo) => {
+          {sortTodos(filterTodos()).map((todo) => {
             return (
               <div
                 key={todo.id}
@@ -231,7 +245,9 @@ function App() {
                     todo.completed ? "checked_button" : ""
                   }`}
                   onClick={() => {
-                    handleCheck(todo.id);
+                    //handleCheck(todo.id);
+                    //rearangeTodos(todo.id, index);
+                    handleCheck(todo.completed, todo.id);
                   }}
                 >
                   <div
