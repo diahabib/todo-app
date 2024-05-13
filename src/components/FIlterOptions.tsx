@@ -1,38 +1,38 @@
-//type ChangeTodosState = (state) => void;
-
 const FilterOptions = ({
   filterState,
-  filterStateOptions,
   changeTodosState,
+}: {
+  filterState: string;
+  changeTodosState: (state: string) => void;
 }) => {
   return (
     <div className="flex gap-4 self-center basis-full lg:basis-3/6 relative top-16 lg:top- text-center">
       <button
         className={`filter-items ${
-          filterState === filterStateOptions.all ? "selectedOption" : ""
+          filterState === "all" ? "selectedOption" : ""
         }`}
         onClick={() => {
-          changeTodosState(filterStateOptions.all);
+          changeTodosState("all");
         }}
       >
         All
       </button>
       <button
         className={`filter-items ${
-          filterState === filterStateOptions.active ? "selectedOption" : ""
+          filterState === "active" ? "selectedOption" : ""
         }`}
         onClick={() => {
-          changeTodosState(filterStateOptions.active);
+          changeTodosState("active");
         }}
       >
         Active
       </button>
       <button
         className={`filter-items ${
-          filterState === filterStateOptions.completed ? "selectedOption" : ""
+          filterState === "completed" ? "selectedOption" : ""
         }`}
         onClick={() => {
-          changeTodosState(filterStateOptions.completed);
+          changeTodosState("completed");
         }}
       >
         Completed
