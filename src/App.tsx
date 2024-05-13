@@ -1,46 +1,46 @@
 //import { useState } from "react";
 import "./App.css";
-import moon_icon from "./assets/icon-moon.svg";
-import sun_icon from "./assets/icon-sun.svg";
-import check_icon from "./assets/icon-check.svg";
-import cross_icon from "./assets/icon-cross.svg";
 import { useState, useEffect } from "react";
+import TodoItem from "./components/TodoItem";
+import Header from "./components/Header";
+import TodoInput from "./components/TodoInput";
+import FilterOptions from "./components/FIlterOptions";
+
+type todoType = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+
+const todoList: todoType[] = [
+  {
+    id: 1,
+    text: "Take out the trash",
+    completed: false,
+  },
+  {
+    id: 2,
+    text: "Grocery shopping",
+    completed: false,
+  },
+  {
+    id: 3,
+    text: "Clean the house",
+    completed: false,
+  },
+  {
+    id: 4,
+    text: "Cook dinner",
+    completed: true,
+  },
+  {
+    id: 5,
+    text: "Learn React",
+    completed: true,
+  },
+];
 
 function App() {
-  type todoType = {
-    id: number;
-    text: string;
-    completed: boolean;
-  };
-
-  const todoList: todoType[] = [
-    {
-      id: 1,
-      text: "Take out the trash",
-      completed: false,
-    },
-    {
-      id: 2,
-      text: "Grocery shopping",
-      completed: false,
-    },
-    {
-      id: 3,
-      text: "Clean the house",
-      completed: false,
-    },
-    {
-      id: 4,
-      text: "Cook dinner",
-      completed: true,
-    },
-    {
-      id: 5,
-      text: "Learn React",
-      completed: true,
-    },
-  ];
-
   const [todos, setTodos] = useState(todoList);
 
   /*const handleCheck = (todo: todoType) => {
@@ -105,29 +105,9 @@ const partition = (todos: todoType[], low: number, high: number) => {
   };
 
   const clearTodos = () => {
-    //tdos.splice(0, tdos.length);
-    //setTodos([...tdos]);
     setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
   };
-  /*
-  const rearrangeTodos = (id: number, index: number) => {
-    //for (let i = 0; i < todos.length; i++) {
-    //if (todos[i].id === index) {
-    //console.log(todos[i]);
-    handleCheck(id);
 
-    if (index < todos.length) {
-      tdd = todos[index];
-    }
-
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-    console.log(todos);
-
-    console.log(tdd);
-
-    setTodos((prevTodos) => [...prevTodos, tdd]);
-  };
-*/
   const rearrangeTodos = (id: number) => {
     setTodos((prevTodos) => {
       const todoToRearrange = prevTodos.find((todo) => todo.id === id);
@@ -196,94 +176,18 @@ const partition = (todos: todoType[], low: number, high: number) => {
           darkMode ? "dark" : ""
         } flex flex-col px-6  py-12 gap-y-8 lg:px-[35%] `}
       >
-        <header className="flex justify-between  lg:items-center">
-          <h1 className="text-white text-4xl font-extrabold">TODO</h1>
-          <button onClick={toggleDarkMode}>
-            <img src={darkMode ? sun_icon : moon_icon} alt="theme icon" />
-          </button>
-        </header>
+        <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
+        <TodoInput addTodo={addTodo} />
 
-        <div className="todo_list">
-          <div className="todos_container flex ps-4 gap-2">
-            {
-              //<div className="check_button p-3 size-3 self-center "></div>
-            }
-            <button className="check_button self-center">
-              <div className="check_box p-2 size-2">
-                <img
-                  src={check_icon}
-                  alt="cross icon"
-                  className=" bg-transparent"
-                />
-              </div>
-            </button>
-            <input
-              type="text"
-              placeholder="Create a new todo"
-              className="w-full p-4 rounded-md outline-none"
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  const inpuElement = event.target as HTMLInputElement;
-                  console.log(inpuElement.value);
-                  addTodo(inpuElement.value);
-                  inpuElement.value = "";
-                }
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="todo_list">
+        <ul className="todo_list">
           {sortTodos(filterTodos()).map((todo) => {
             return (
-              <div
+              <TodoItem
                 key={todo.id}
-                className="todos_container todo flex px-4 gap-2 border-b-2 "
-              >
-                <button
-                  className={`check_button self-center ${
-                    todo.completed ? "checked_button" : ""
-                  }`}
-                  onClick={() => {
-                    //handleCheck(todo.id);
-                    //rearangeTodos(todo.id, index);
-                    handleCheck(todo.completed, todo.id);
-                  }}
-                >
-                  <div
-                    className={`check_box p-2 size-2  ${
-                      todo.completed ? "checkedBG " : ""
-                    }`}
-                  >
-                    <img
-                      src={check_icon}
-                      alt="check icon"
-                      className="check_button_icon"
-                      style={{ width: "20px", height: "20px" }}
-                    />
-                  </div>
-                </button>
-
-                <input
-                  type="text"
-                  value={todo.text}
-                  className={`w-full p-4 text-black rounded-md outline-none ${
-                    todo.completed ? "completed_tasks text-[] line-through" : ""
-                  }`}
-                />
-                {!todo.completed && (
-                  <button className="delete_button">
-                    <img
-                      src={cross_icon}
-                      alt="cross icon"
-                      className=" self-center"
-                      onClick={() => {
-                        removeTodo(todo.id);
-                      }}
-                    />
-                  </button>
-                )}
-              </div>
+                todo={todo}
+                handleCheck={handleCheck}
+                removeTodo={removeTodo}
+              />
             );
           })}
           <div className="todos_container todos-options flex justify-between p-3 px-4 gap-x-2 text-sm pb-0 lg:pb-3">
@@ -301,51 +205,18 @@ const partition = (todos: todoType[], low: number, high: number) => {
                   Clear Completed
                 </button>
               </div>
-              <div className="flex gap-4 self-center basis-full lg:basis-3/6 relative top-16 lg:top-0 text-center">
-                <button
-                  className={`filter-items ${
-                    filterState === filterStateOptions.all
-                      ? "selectedOption"
-                      : ""
-                  }`}
-                  onClick={() => {
-                    changeTodosState(filterStateOptions.all);
-                  }}
-                >
-                  All
-                </button>
-                <button
-                  className={`filter-items ${
-                    filterState === filterStateOptions.active
-                      ? "selectedOption"
-                      : ""
-                  }`}
-                  onClick={() => {
-                    changeTodosState(filterStateOptions.active);
-                  }}
-                >
-                  Active
-                </button>
-                <button
-                  className={`filter-items ${
-                    filterState === filterStateOptions.completed
-                      ? "selectedOption"
-                      : ""
-                  }`}
-                  onClick={() => {
-                    changeTodosState(filterStateOptions.completed);
-                  }}
-                >
-                  Completed
-                </button>
-              </div>
+              <FilterOptions
+                filterState={filterState}
+                filterStateOptions={filterStateOptions}
+                changeTodosState={changeTodosState}
+              />
             </div>
           </div>
 
           {!isLaptop && (
             <div className="todos_container mt-7 p-6 px-4 gap-2"></div>
           )}
-        </div>
+        </ul>
       </div>
     </>
   );
