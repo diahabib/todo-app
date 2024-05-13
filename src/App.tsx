@@ -140,7 +140,7 @@ const partition = (todos: todoType[], low: number, high: number) => {
     completed = "completed",
   }
 
-  const [filterState, setState] = useState(filterStateOptions.all);
+  const [filterState, setState] = useState(filterStateOptions.all.toString());
 
   const filterTodos = () => {
     switch (filterState) {
@@ -158,7 +158,7 @@ const partition = (todos: todoType[], low: number, high: number) => {
     }
   };
 
-  const changeTodosState = (state: filterStateOptions) => {
+  const changeTodosState = (state: string) => {
     setState(state);
     filterTodos();
   };
@@ -207,7 +207,6 @@ const partition = (todos: todoType[], low: number, high: number) => {
               </div>
               <FilterOptions
                 filterState={filterState}
-                filterStateOptions={filterStateOptions}
                 changeTodosState={changeTodosState}
               />
             </div>
