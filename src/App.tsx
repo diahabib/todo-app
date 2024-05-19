@@ -5,75 +5,19 @@ import TodoItem from "./components/TodoItem";
 import Header from "./components/Header";
 import TodoInput from "./components/TodoInput";
 import FilterOptions from "./components/FIlterOptions";
-
-type todoType = {
-  id: number;
-  text: string;
-  completed: boolean;
-};
-
-const todoList: todoType[] = [
-  {
-    id: 1,
-    text: "Take out the trash",
-    completed: false,
-  },
-  {
-    id: 2,
-    text: "Grocery shopping",
-    completed: false,
-  },
-  {
-    id: 3,
-    text: "Clean the house",
-    completed: false,
-  },
-  {
-    id: 4,
-    text: "Cook dinner",
-    completed: true,
-  },
-  {
-    id: 5,
-    text: "Learn React",
-    completed: true,
-  },
-];
+import todoList from "./todoList.json";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { TodoType, filterStateOptions } from "./types";
 
 function App() {
   const [todos, setTodos] = useState(todoList);
+  const [filterState, setState] = useState(filterStateOptions.all.toString());
+  const [isLaptop, setIsLaptopState] = useState(window.innerWidth >= 1024);
 
-  /*const handleCheck = (todo: todoType) => {
-    todo.completed = todo.completed ? false : true;
-  };*/
-  /*
-  const quickSort = (todos: todoType[], low = 0, high = todos.length - 1) => {
-  if (low < high) {
-    const pivotIndex = partition(todos, low, high);
-    quickSort(todos, low, pivotIndex - 1);
-    quickSort(todos, pivotIndex + 1, high);
-  }
-  return todos;
-};
+  const [darkMode, setDarkMode] = useState(false);
 
-const partition = (todos: todoType[], low: number, high: number) => {
-  const pivot = todos[high].completed;
-  let i = low - 1;
-
-  for (let j = low; j < high; j++) {
-    if (todos[j].completed <= pivot) {
-      i++;
-      [todos[i], todos[j]] = [todos[j], todos[i]]; // Swap elements
-    }
-  }
-
-  [todos[i + 1], todos[high]] = [todos[high], todos[i + 1]]; // Swap pivot
-
-  return i + 1;
-};
-*/
-
-  const sortTodos = (todos: todoType[]) => {
+  const sortTodos = (todos: TodoType[]) => {
     return todos.sort((todoA, todoB) => {
       if (todoA.completed && !todoB.completed) return -1;
       if (!todoA.completed && todoB.completed) return 1;
@@ -90,8 +34,14 @@ const partition = (todos: todoType[], low: number, high: number) => {
     if (!tds) rearrangeTodos(id);
   };
 
+  const handleCheckAll = (checked: boolean) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => ({ ...todo, completed: checked }))
+    );
+  };
+
   const addTodo = (newTodo: string) => {
-    const todo: todoType = {
+    const todo: TodoType = {
       id: todos.length + 1,
       text: newTodo,
       completed: false,
@@ -117,11 +67,9 @@ const partition = (todos: todoType[], low: number, high: number) => {
     });
   };
 
-  const countActiveTodos = (tdos: Array<todoType>) => {
+  const countActiveTodos = (tdos: Array<TodoType>) => {
     return tdos.filter((todo) => !todo.completed).length;
   };
-
-  const [isLaptop, setIsLaptopState] = useState(window.innerWidth >= 1024);
 
   useEffect(() => {
     const handleResize = () => {
@@ -134,13 +82,6 @@ const partition = (todos: todoType[], low: number, high: number) => {
   }, []);
 
   //console.log(activeTodos(todos));
-  enum filterStateOptions {
-    all = "todos",
-    active = "active",
-    completed = "completed",
-  }
-
-  const [filterState, setState] = useState(filterStateOptions.all.toString());
 
   const filterTodos = () => {
     switch (filterState) {
@@ -163,30 +104,31 @@ const partition = (todos: todoType[], low: number, high: number) => {
     filterTodos();
   };
 
-  const [darkMode, setDarkMode] = useState(false);
-
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
 
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <div
         className={`containerr ${
           darkMode ? "dark" : ""
         } flex flex-col px-6  py-12 gap-y-8 lg:px-[35%] `}
       >
         <Header darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-        <TodoInput addTodo={addTodo} />
+        <TodoInput addTodo={addTodo} handleCheckAll={handleCheckAll} />
 
         <ul className="todo_list">
-          {sortTodos(filterTodos()).map((todo) => {
+          {sortTodos(filterTodos()).map((todo, index) => {
             return (
               <TodoItem
                 key={todo.id}
                 todo={todo}
+                index={index}
                 handleCheck={handleCheck}
                 removeTodo={removeTodo}
+                setTodos={setTodos}
+                todos={todos}
               />
             );
           })}
@@ -216,8 +158,12 @@ const partition = (todos: todoType[], low: number, high: number) => {
             <div className="todos_container mt-7 p-6 px-4 gap-2"></div>
           )}
         </ul>
+
+        <p className="dnd_text text-center text-sm">
+          Drag and drop to reorder list
+        </p>
       </div>
-    </>
+    </DndProvider>
   );
 }
 

@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "text": "Take out the trash",
+    "completed": false
+  },
+  {
+    "id": 2,
+    "text": "Grocery shopping",
+    "completed": false
+  },
+  {
+    "id": 3,
+    "text": "Clean the house",
+    "completed": false
+  },
+  {
+    "id": 4,
+    "text": "Cook dinner",
+    "completed": true
+  },
+  {
+    "id": 5,
+    "text": "Learn React",
+    "completed": true
+  }
+]
