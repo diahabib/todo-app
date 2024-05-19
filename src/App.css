@@ -85,6 +85,14 @@
   display: inline;
 }
 
+.todo_list .todo {
+  transition: opacity 0.2s;
+}
+
+.todo_list .todo.opacity-50 {
+  opacity: 0.5;
+}
+
 .todos-options {
   color: hsl(235, 19%, 35%);
 }
@@ -146,4 +154,8 @@
 .dark .button_clear-items:hover,
 .dark .filter-items:hover {
   color: hsl(236, 33%, 92%);
+}
+
+.dnd_text {
+  color: hsl(236, 9%, 61%);
 }

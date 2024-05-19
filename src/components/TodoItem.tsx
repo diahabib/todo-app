@@ -1,26 +1,62 @@
+import { useRef } from "react";
+import { useDrag, useDrop } from "react-dnd";
 import check_icon from "../assets/icon-check.svg";
 import cross_icon from "../assets/icon-cross.svg";
-
+import { HandleCheck, RemoveTodo, TodoType } from "../types";
 interface Todo {
   id: number;
   text: string;
   completed: boolean;
 }
 
-type HandleCheck = (completed: boolean, id: number) => void;
-type RemoveTodo = (id: number) => void;
-
 const TodoItem = ({
   todo,
   handleCheck,
   removeTodo,
+  index,
+  setTodos,
+  todos,
 }: {
-  todo: Todo;
+  todo: TodoType;
   handleCheck: HandleCheck;
   removeTodo: RemoveTodo;
+  index: number;
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  todos: Todo[];
 }) => {
+  const ref = useRef<HTMLLIElement>(null);
+
+  const [{ isDragging }, drag] = useDrag({
+    type: "todo",
+    item: { index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: "todo",
+    hover: (draggedItem: { index: number }) => {
+      if (draggedItem.index !== index) {
+        const newTodos = [...todos];
+        const [removed] = newTodos.splice(draggedItem.index, 1);
+        newTodos.splice(index, 0, removed);
+
+        setTodos(newTodos);
+        draggedItem.index = index;
+      }
+    },
+  });
+
+  drag(drop(ref));
+
   return (
-    <li className="todos_container todo flex px-4 gap-2 border-b-2 ">
+    <li
+      className={`todos_container todo flex px-4 gap-2 border-b-2 ${
+        isDragging ? "opacity-50" : ""
+      }`}
+      ref={ref}
+    >
       <button
         className={`check_button self-center ${
           todo.completed ? "checked_button" : ""
