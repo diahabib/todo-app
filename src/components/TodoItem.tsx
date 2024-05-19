@@ -3,11 +3,6 @@ import { useDrag, useDrop } from "react-dnd";
 import check_icon from "../assets/icon-check.svg";
 import cross_icon from "../assets/icon-cross.svg";
 import { HandleCheck, RemoveTodo, TodoType } from "../types";
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
 
 const TodoItem = ({
   todo,
@@ -21,8 +16,8 @@ const TodoItem = ({
   handleCheck: HandleCheck;
   removeTodo: RemoveTodo;
   index: number;
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
-  todos: Todo[];
+  setTodos: React.Dispatch<React.SetStateAction<TodoType[]>>;
+  todos: TodoType[];
 }) => {
   const ref = useRef<HTMLLIElement>(null);
 
